@@ -2,11 +2,8 @@ package com.cyNothing.window;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import com.cyNothing.assets.Coordinate;
@@ -17,13 +14,10 @@ public class Board extends JPanel {
 	private Panel panel;
 	private final int RES;
 
-	private BufferedImage rosette = null;
-	
 	public int width, height;
 
 	public Coordinate[] left, right;
 	public ArrayList<Counter> leftCounters = new ArrayList<Counter>(), rightCounters = new ArrayList<Counter>();
-
 
 	public Board(Panel _p) {
 
@@ -50,12 +44,6 @@ public class Board extends JPanel {
 				new Coordinate(2, 1), new Coordinate(2, 0), new Coordinate(1, 0), new Coordinate(1, 1),
 				new Coordinate(1, 2), new Coordinate(1, 3), new Coordinate(1, 4), new Coordinate(1, 5),
 				new Coordinate(1, 6), new Coordinate(1, 7), new Coordinate(2, 7), new Coordinate(2, 6), };
-		
-		try {
-			rosette = ImageIO.read(new File("resources/Rosette.png"));
-		} catch (Exception e) {
-			System.out.println(e);
-		}
 
 	}
 
@@ -130,10 +118,10 @@ public class Board extends JPanel {
 						if (tmpCounter.equals(rc))
 							return;
 					}
-					
+
 					for (Counter lc : leftCounters) {
 						if (tmpCounter.equals(lc)) {
-							
+
 							if (tmpCounter.getPlace() == 8) {
 								return;
 							} else {
@@ -154,45 +142,56 @@ public class Board extends JPanel {
 
 	public void paintComponent(Graphics g) {
 
-		Color leftPieceCol = new Color(144, 200, 206), rightPieceCol = new Color(49, 131, 140);
-
 		// Clears board and sets background
 		g.clearRect(0, 0, width, height);
-		g.setColor(new Color(150, 109, 7));
+		g.setColor(new Color(125, 95, 0));
 		g.fillRect(0, 0, width, height);
+
+		g.setColor(new Color(110, 80, 0));
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 8; y++) {
+				if (x % 2 == 0) {
+					if (y % 2 == 0) {
+						g.fillRect(x * RES, y * RES, RES, RES);
+					}
+				} else {
+					if (y % 2 != 0)
+						g.fillRect(x * RES, y * RES, RES, RES);
+				}
+			}
+		}
 
 		// Draws grid over the board
 		g.setColor(new Color(48, 48, 48));
 		for (int x = 0; x < width / RES; x++) {
 			for (int y = 0; y < height / RES; y++) {
 				g.drawRect(x * RES, y * RES, RES, RES);
-//				g.drawRect(x * 80 + 1, y * 80 + 1, RES - 2, RES - 2);
+				// g.drawRect(x * 80 + 1, y * 80 + 1, RES - 2, RES - 2);
 			}
 		}
 
 		// Clears the 4 squares that aren't part of the board
-		g.setColor(new Color(5, 114, 14));
+		g.setColor(new Color(0, 96, 0));
 		g.fillRect(RES * 0, RES * 4 + 1, RES, RES * 2 - 1);
 		g.fillRect(RES * 2 + 1, RES * 4 + 1, RES, RES * 2 - 1);
 
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 8; y++) {
 				if (x % 2 == 0) {
-					if (y % 6 ==0)
-						g.drawImage(rosette, x * RES, y * RES, RES, RES, null);
+					if (y % 6 == 0)
+						g.drawImage(panel.rosette, x * RES, y * RES, RES, RES, null);
 				} else if (y == 3)
-					g.drawImage(rosette, x * RES, y * RES, RES, RES, null);
+					g.drawImage(panel.rosette, x * RES, y * RES, RES, RES, null);
 			}
 		}
-		
+
 		// Draw the counters
-		g.setColor(leftPieceCol);
 		for (Coordinate c : leftCounters)
-			g.fillOval(c.getX() * RES + RES / 8, c.getY() * RES + RES / 8, RES / 4 * 3, RES / 4 * 3);
-		g.setColor(rightPieceCol);
+			g.drawImage(panel.lCounter, c.getX() * RES, c.getY() * RES, null);
+
 		for (Coordinate c : rightCounters)
-			g.fillOval(c.getX() * RES + RES / 8, c.getY() * RES + RES / 8, RES / 4 * 3, RES / 4 * 3);
-		
+			g.drawImage(panel.rCounter, c.getX() * RES, c.getY() * RES, null);
+
 	}
 
 	public void render() {

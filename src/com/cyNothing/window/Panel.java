@@ -163,12 +163,15 @@ public class Panel extends JPanel {
 
 		roll();
 
-		if (roll[4] == 0) { // ai rolled 0.
+		if (roll[4] == 0) // ai rolled 0.
 			return;
-		}
+
+		if (rCountersLeft + board.rightCounters.size() == 0)
+			return;
 
 		// Finds all valid places
-		validPlaces.add(new Coordinate(roll[4], 0));
+		if (rCountersLeft > 0)
+			validPlaces.add(new Coordinate(roll[4], 0));
 
 		for (Counter c : board.rightCounters)
 			validPlaces.add(new Coordinate(c.getPlace() + roll[4], 0));
@@ -190,7 +193,10 @@ public class Panel extends JPanel {
 			if (validPlaces.get(x).getX() > 15)
 				validPlaces.remove(x);
 
-		// Defaults all move values to 1.
+		if (validPlaces.size() == 0)
+			return;
+		
+		// Defaults all move values to 0.
 		for (Coordinate c : validPlaces)
 			c.setY(0);
 
@@ -218,11 +224,11 @@ public class Panel extends JPanel {
 
 			// Enter War Zone
 			if (x - roll[4] < 5 && x > 4)
-				c.subY(2);
+				c.subY(1);
 
 			// Leaving 8
 			if (x - roll[4] == 8)
-				c.subY(5);
+				c.subY(8);
 
 			for (Counter c2 : board.leftCounters) { // All enemy logic
 
@@ -230,7 +236,7 @@ public class Panel extends JPanel {
 
 					// Escape 2 squares from enemy
 					if (c2.getPlace() + 2 == x - roll[4] && x - roll[4] != 8)
-						c.addY(6);
+						c.addY(8);
 
 					// Escapes 1/3 squares from enemy
 					if (c2.getPlace() + 1 == x - roll[4] || c2.getPlace() + 3 == x - roll[4] && x - roll[4] != 8)
@@ -269,11 +275,11 @@ public class Panel extends JPanel {
 			}
 		});
 
-		System.out.println("--===--");
-
-		for (Coordinate c : validPlaces) {
-			System.out.println(c.getX() + ": " + c.getY());
-		}
+//		System.out.println("--===--");
+//
+//		for (Coordinate c : validPlaces) {
+//			System.out.println(c.getX() + ": " + c.getY());
+//		}
 
 		// If the highest value option is putting a piece on the board
 		if (validPlaces.get(0).getX() == roll[4])
